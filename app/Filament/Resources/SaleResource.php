@@ -123,7 +123,7 @@ class SaleResource extends Resource
                                     ->disabled()
                                     ->dehydrated()
                                     ->prefix('Rp'),
-                                Forms\Components\Placeholder::make('summary_text')
+                                \Filament\Schemas\Components\Text::make('summary_text')
                                     ->content(fn (Get $get) => 'Total Untung: Rp ' . number_format($get('profit'), 0, ',', '.')),
                             ]),
                     ])->columnSpan(1),
@@ -194,7 +194,7 @@ class SaleResource extends Resource
                         'Hutang' => 'Hutang',
                     ]),
                 Tables\Filters\Filter::make('created_at')
-                    ->form([
+                    ->schema([
                         Forms\Components\DatePicker::make('from_date')
                             ->label('Dari Tanggal'),
                         Forms\Components\DatePicker::make('to_date')
