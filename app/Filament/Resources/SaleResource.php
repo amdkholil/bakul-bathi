@@ -39,7 +39,17 @@ class SaleResource extends Resource
                                 Forms\Components\Select::make('customer_id')
                                     ->relationship('customer', 'name')
                                     ->searchable()
-                                    ->preload(),
+                                    ->preload()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->required()
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('phone')
+                                            ->tel()
+                                            ->maxLength(255),
+                                        Forms\Components\Textarea::make('address')
+                                            ->maxLength(65535),
+                                    ]),
                                 Forms\Components\Select::make('status')
                                     ->options([
                                         'Lunas' => 'Lunas',
@@ -69,6 +79,32 @@ class SaleResource extends Resource
                                             ->required()
                                             ->searchable()
                                             ->preload()
+                                            ->createOptionForm([
+                                                Forms\Components\TextInput::make('name')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                Forms\Components\TextInput::make('barcode')
+                                                    ->maxLength(255),
+                                                Forms\Components\TextInput::make('category')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                Forms\Components\TextInput::make('cost_price')
+                                                    ->numeric()
+                                                    ->prefix('Rp')
+                                                    ->required(),
+                                                Forms\Components\TextInput::make('selling_price')
+                                                    ->numeric()
+                                                    ->prefix('Rp')
+                                                    ->required(),
+                                                Forms\Components\TextInput::make('stock')
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->default(0),
+                                                Forms\Components\TextInput::make('min_stock')
+                                                    ->numeric()
+                                                    ->default(5)
+                                                    ->required(),
+                                            ])
                                             ->live()
                                             ->afterStateUpdated(function ($state, Set $set) {
                                                 $product = Product::find($state);
