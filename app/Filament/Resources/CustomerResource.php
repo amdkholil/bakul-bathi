@@ -4,22 +4,25 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Models\Customer;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use BackedEnum;
-use Filament\Actions\EditAction;
 use UnitEnum;
 
 class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Master Data';
+    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
 
     public static function form(Schema $schema): Schema
     {
@@ -55,14 +58,15 @@ class CustomerResource extends Resource
             ])
             ->filters([])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->stackedOnMobile();
     }
 
     public static function getPages(): array

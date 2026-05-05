@@ -5,34 +5,43 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Product;
 use App\Models\Sale;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use BackedEnum;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class SaleResource extends Resource
 {
     protected static ?string $model = Sale::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Transactions';
+    protected static string|UnitEnum|null $navigationGroup = 'Transactions';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                \Filament\Schemas\Components\Group::make()
+                Group::make()
                     ->schema([
-                        \Filament\Schemas\Components\Section::make('')
+                        Section::make('')
                             ->schema([
                                 Forms\Components\TextInput::make('invoice_number')
-                                    ->default('INV-' . strtoupper(now()->format('Ymd-His')))
+                                    ->default('INV-'.strtoupper(now()->format('Ymd-His')))
                                     ->disabled()
                                     ->dehydrated(true)
                                     ->required(),
@@ -69,7 +78,7 @@ class SaleResource extends Resource
                                     ->native(false),
                             ])->columns(2),
 
-                        \Filament\Schemas\Components\Section::make('')
+                        Section::make('')
                             ->schema([
                                 Forms\Components\Repeater::make('items')
                                     ->relationship()
@@ -134,13 +143,13 @@ class SaleResource extends Resource
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         static::calculateTotals($get, $set);
                                     })
-                                    ->deleteAction(fn (\Filament\Actions\Action $action) => $action->after(fn (Get $get, Set $set) => static::calculateTotals($get, $set))),
+                                    ->deleteAction(fn (Action $action) => $action->after(fn (Get $get, Set $set) => static::calculateTotals($get, $set))),
                             ]),
                     ])->columnSpan(2),
 
-                \Filament\Schemas\Components\Group::make()
+                Group::make()
                     ->schema([
-                        \Filament\Schemas\Components\Section::make('Summary')
+                        Section::make('Summary')
                             ->schema([
                                 Forms\Components\TextInput::make('total_price')
                                     ->numeric()
@@ -159,8 +168,8 @@ class SaleResource extends Resource
                                     ->disabled()
                                     ->dehydrated()
                                     ->prefix('Rp'),
-                                \Filament\Schemas\Components\Text::make('summary_text')
-                                    ->content(fn (Get $get) => 'Total Untung: Rp ' . number_format($get('profit'), 0, ',', '.')),
+                                Text::make('summary_text')
+                                    ->content(fn (Get $get) => 'Total Untung: Rp '.number_format($get('profit'), 0, ',', '.')),
                             ]),
                     ])->columnSpan(1),
             ]);
@@ -202,14 +211,14 @@ class SaleResource extends Resource
                     ->sortable()
                     ->summarize(
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
+                            ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.'))
                     ),
                 Tables\Columns\TextColumn::make('profit')
                     ->money('IDR', locale: 'id')
                     ->sortable()
                     ->summarize(
                         Tables\Columns\Summarizers\Sum::make()
-                            ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
+                            ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.'))
                     ),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -236,27 +245,28 @@ class SaleResource extends Resource
                         Forms\Components\DatePicker::make('to_date')
                             ->label('Sampai Tanggal'),
                     ])
-                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data): \Illuminate\Database\Eloquent\Builder {
+                    ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
                                 $data['from_date'],
-                                fn (\Illuminate\Database\Eloquent\Builder $query, string $date): \Illuminate\Database\Eloquent\Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, string $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['to_date'],
-                                fn (\Illuminate\Database\Eloquent\Builder $query, string $date): \Illuminate\Database\Eloquent\Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, string $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->stackedOnMobile();
     }
 
     public static function getRelations(): array

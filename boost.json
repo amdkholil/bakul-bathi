@@ -1,0 +1,24 @@
+{
+    "agents": [
+        "codex",
+        "gemini"
+    ],
+    "cloud": false,
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch": false,
+    "sail": false,
+    "skills": [
+        "laravel-best-practices",
+        "pest-testing",
+        "tailwindcss-development",
+        "cavecrew",
+        "caveman",
+        "caveman-commit",
+        "caveman-compress",
+        "caveman-help",
+        "caveman-review",
+        "caveman-stats",
+        "compress"
+    ]
+}

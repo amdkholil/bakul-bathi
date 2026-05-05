@@ -4,21 +4,28 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use BackedEnum;
 use UnitEnum;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Master Data';
+    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
 
     public static function form(Schema $schema): Schema
     {
@@ -33,7 +40,7 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('category')
                     ->required()
                     ->maxLength(255),
-                \Filament\Schemas\Components\Section::make('Pricing')
+                Section::make('Pricing')
                     ->schema([
                         Forms\Components\TextInput::make('cost_price')
                             ->numeric()
@@ -76,16 +83,17 @@ class ProductResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
-                    \Filament\Actions\ForceDeleteBulkAction::make(),
-                    \Filament\Actions\RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->stackedOnMobile();
     }
 
     public static function getPages(): array

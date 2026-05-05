@@ -54,7 +54,7 @@ class ShopStatsOverview extends BaseWidget
                 ->color('success')
                 ->chart([3, 5, 2, 8, 4, 7, 10]),
 
-            Stat::make('Stok Menipis', $lowStockCount . ' Produk')
+            Stat::make('Stok Menipis', $lowStockCount.' Produk')
                 ->description($lowStockCount > 0 ? 'Segera lakukan restock' : 'Semua stok aman')
                 ->descriptionIcon('heroicon-m-archive-box-arrow-down')
                 ->color($lowStockCount > 0 ? 'danger' : 'success')
@@ -71,12 +71,9 @@ class ShopStatsOverview extends BaseWidget
 
     /**
      * Format currency value to Indonesian Rupiah.
-     *
-     * @param float $value
-     * @return string
      */
     private function formatRupiah(float $value): string
     {
-        return 'Rp ' . number_format($value, 0, ',', '.');
+        return 'Rp '.number_format($value, 0, ',', '.');
     }
 }

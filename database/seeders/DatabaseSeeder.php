@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
 
         // 3. Create sample sales
         Sale::factory(15)->create([
-            'customer_id' => fn() => $customers->random()->id
+            'customer_id' => fn () => $customers->random()->id,
         ])->each(function ($sale) use ($products) {
             // Add 1-5 random products as SaleItems
             $items = SaleItem::factory(fake()->numberBetween(1, 5))->make([
@@ -38,9 +38,9 @@ class DatabaseSeeder extends Seeder
             });
 
             // Calculate totals for the sale
-            $totalPrice = $items->sum(fn($i) => $i->quantity * $i->price_at_sale);
-            $totalCost = $items->sum(fn($i) => $i->quantity * $i->cost_at_sale);
-            
+            $totalPrice = $items->sum(fn ($i) => $i->quantity * $i->price_at_sale);
+            $totalCost = $items->sum(fn ($i) => $i->quantity * $i->cost_at_sale);
+
             $sale->update([
                 'total_price' => $totalPrice,
                 'total_cost' => $totalCost,
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
                 DebtLog::factory(fake()->numberBetween(1, 2))->create([
                     'sale_id' => $sale->id,
                     'amount_paid' => $totalPrice * 0.2, // Sample partial payment
-                    'description' => 'Cicilan awal / Pembayaran sebagian'
+                    'description' => 'Cicilan awal / Pembayaran sebagian',
                 ]);
             }
         });

@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\SaleItem;
+use App\Models\StockTransaction;
+use App\Observers\SaleItemObserver;
+use App\Observers\StockTransactionObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        SaleItem::observe(SaleItemObserver::class);
+        StockTransaction::observe(StockTransactionObserver::class);
     }
 }

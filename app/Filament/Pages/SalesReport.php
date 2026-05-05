@@ -9,27 +9,26 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Enums\Width;
 
 class SalesReport extends Page implements HasForms, HasTable
 {
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-chart-bar';
 
     protected string $view = 'filament.pages.sales-report';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Reports';
+    protected static string|\UnitEnum|null $navigationGroup = 'Reports';
 
     protected static ?string $title = 'Laporan Penjualan Bulanan';
 
@@ -47,7 +46,7 @@ class SalesReport extends Page implements HasForms, HasTable
     {
         return $schema
             ->components([
-                \Filament\Schemas\Components\Section::make('Filter Laporan')
+                Section::make('Filter Laporan')
                     ->schema([
                         Select::make('month')
                             ->label('Bulan')
@@ -112,7 +111,7 @@ class SalesReport extends Page implements HasForms, HasTable
                     ->summarize(
                         Sum::make()
                             ->label('Total Omzet')
-                            ->formatStateUsing(fn ($state): string => 'Rp ' . number_format((float) $state, 0, ',', '.'))
+                            ->formatStateUsing(fn ($state): string => 'Rp '.number_format((float) $state, 0, ',', '.'))
                     ),
                 TextColumn::make('profit')
                     ->label('Total Bathi')
@@ -120,7 +119,7 @@ class SalesReport extends Page implements HasForms, HasTable
                     ->summarize(
                         Sum::make()
                             ->label('Total Bathi')
-                            ->formatStateUsing(fn ($state): string => 'Rp ' . number_format((float) $state, 0, ',', '.'))
+                            ->formatStateUsing(fn ($state): string => 'Rp '.number_format((float) $state, 0, ',', '.'))
                     ),
             ])
             ->modifyQueryUsing(function (Builder $query): Builder {
@@ -134,7 +133,8 @@ class SalesReport extends Page implements HasForms, HasTable
                     ->when($status, fn (Builder $q) => $q->where('status', $status));
             })
             ->defaultSort('created_at', 'desc')
-            ->paginated(false);
+            ->paginated(false)
+            ->stackedOnMobile();
     }
 
     public function getMaxContentWidth(): Width|string|null
@@ -165,21 +165,21 @@ class SalesReport extends Page implements HasForms, HasTable
         return [
             [
                 'label' => 'Omzet',
-                'value' => 'Rp ' . number_format($totalOmzet, 0, ',', '.'),
+                'value' => 'Rp '.number_format($totalOmzet, 0, ',', '.'),
                 'description' => 'Penerimaan kotor periode ini',
                 'icon' => 'heroicon-m-presentation-chart-line',
                 'color' => 'success',
             ],
             [
                 'label' => 'Bathi',
-                'value' => 'Rp ' . number_format($totalProfit, 0, ',', '.'),
+                'value' => 'Rp '.number_format($totalProfit, 0, ',', '.'),
                 'description' => 'Keuntungan bersih periode ini',
                 'icon' => 'heroicon-m-banknotes',
                 'color' => 'primary',
             ],
             [
                 'label' => 'Total Transaksi',
-                'value' => $count . ' Transaksi',
+                'value' => $count.' Transaksi',
                 'description' => 'Frekuensi penjualan',
                 'icon' => 'heroicon-m-shopping-cart',
                 'color' => 'warning',

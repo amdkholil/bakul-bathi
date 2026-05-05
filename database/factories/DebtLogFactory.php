@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\DebtLog;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DebtLog>
+ * @extends Factory<DebtLog>
  */
 class DebtLogFactory extends Factory
 {

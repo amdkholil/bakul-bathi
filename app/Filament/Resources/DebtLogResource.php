@@ -4,21 +4,25 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DebtLogResource\Pages;
 use App\Models\DebtLog;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use BackedEnum;
 use UnitEnum;
 
 class DebtLogResource extends Resource
 {
     protected static ?string $model = DebtLog::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Transactions';
+    protected static string|UnitEnum|null $navigationGroup = 'Transactions';
 
     public static function form(Schema $schema): Schema
     {
@@ -59,14 +63,15 @@ class DebtLogResource extends Resource
             ])
             ->filters([])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->stackedOnMobile();
     }
 
     public static function getPages(): array
